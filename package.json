@@ -1,0 +1,43 @@
+{
+  "name": "use-epic",
+  "version": "1.0.0",
+  "description": "",
+  "repository": "github:Sharakai/use-epic",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": "./lib/index.js",
+    "./*": "./lib/"
+  },
+  "scripts": {
+    "clean": "rimraf lib/",
+    "build": "npm run clean && tsc"
+  },
+  "license": "ISC",
+  "contributors": [
+    {
+      "name": "Kyle Smith",
+      "email": "sharakai.software@gmail.com",
+      "url": "https://github.com/Sharakai"
+    }
+  ],
+  "dependencies": {
+    "react": "^18.2.0",
+    "redux": "^4.2.1",
+    "redux-observable": "^2.0.0",
+    "rxjs": "^7.8.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^14.0.0",
+    "@types/jest": "^29.5.0",
+    "@types/react": "^18.0.35",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
+    "eslint": "^8.38.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "jest": "^29.5.0",
+    "prettier": "^2.8.7",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.0.4"
+  }
+}
