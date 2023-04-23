@@ -1,22 +1,27 @@
 {
-  "name": "use-epic",
+  "name": "use-redux-observable-epic",
   "version": "1.0.0",
-  "description": "",
-  "repository": "github:Sharakai/use-epic",
-  "main": "./lib/cjs/index.js",
-  "types": "./lib/cjs/index.d.ts",
-  "exports": {
-    "import": "./lib/esm/index.js",
-    "require": "./lib/cjs/index.js",
-    "default": "./lib/cjs/index.js"
-  },
-  "scripts": {
-    "clean": "rimraf lib/",
-    "build": "run-s clean build:cjs build:esm",
-    "build:cjs": "tsc --module CommonJS --outDir lib/cjs",
-    "build:esm": "tsc --module ES2015 --outDir lib/esm"
-  },
+  "description": "React hooks to integrate Redux-Observable Epics into a React component's lifecycle.",
   "license": "ISC",
+  "main": "./dist/cjs/index.js",
+  "types": "./dist/cjs/index.d.ts",
+  "exports": {
+    "import": "./dist/esm/index.js",
+    "require": "./dist/cjs/index.js",
+    "default": "./dist/cjs/index.js"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rimraf dist/",
+    "build": "run-s clean build:cjs build:esm",
+    "build:cjs": "tsc --module CommonJS --outDir dist/cjs",
+    "build:esm": "tsc --module ES2015 --outDir dist/esm"
+  },
+  "repository": "github:Sharakai/useReduxObservableEpic",
+  "bugs": {
+    "url": "https://github.com/Sharakai/useReduxObservableEpic/issues"
+  },
+  "homepage": "https://github.com/Sharakai/useReduxObservableEpic#README.md",
   "contributors": [
     {
       "name": "Kyle Smith",
@@ -24,11 +29,13 @@
       "url": "https://github.com/Sharakai"
     }
   ],
+  "files": [
+    "dist/"
+  ],
   "dependencies": {
-    "react": "^18.2.0",
-    "redux": "^4.2.1",
+    "react": ">=16.8.0",
     "redux-observable": "^2.0.0",
-    "rxjs": "^7.8.0"
+    "rxjs": ">=7.0.0"
   },
   "devDependencies": {
     "@testing-library/react": "^14.0.0",

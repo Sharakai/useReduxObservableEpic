@@ -1,11 +1,11 @@
 {
+  "include": ["./src"],
   "compilerOptions": {
     /* Language and Environment */
     "target": "ES2018" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "jsx": "react-jsx" /* Specify what JSX code is generated. */,
 
     /* Modules */
-    "rootDir": "./src" /* Specify the root folder within your source files. */,
     "moduleResolution": "node16" /* Specify how TypeScript looks up a file from a given module specifier. */,
 
     /* JavaScript Support */
@@ -15,7 +15,7 @@
     "declaration": true /* Generate .d.ts files from TypeScript and JavaScript files in your project. */,
     "declarationMap": true /* Create sourcemaps for d.ts files. */,
     "sourceMap": true /* Create source map files for emitted JavaScript files. */,
-    "outDir": "./lib" /* Specify an output folder for all emitted files. */,
+    "outDir": "./dist" /* Specify an output folder for all emitted files. */,
     "noEmitOnError": true /* Disable emitting files if any type checking errors are reported. */,
     "stripInternal": true,
 
