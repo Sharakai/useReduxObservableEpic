@@ -3,8 +3,8 @@ import { Observable, Subject, from, tap } from "rxjs";
 
 import type { ComponentEpic } from "./ComponentEpic";
 import type { UseEpicConfig } from "./UseEpicConfig";
-import { useEpicEffect } from "./useEpicEffect";
 import { isDispatched } from "./internal/EpicDispatch";
+import { type UseEpicOptions, useEpicEffect } from "./useEpicEffect";
 
 /**
  * A variant of {@link useEpicEffect} which provides the emitted values as an Observable.
@@ -23,7 +23,8 @@ import { isDispatched } from "./internal/EpicDispatch";
  * @see {@link useEpicEffect}
  */
 export function useEpic$<V, Config extends UseEpicConfig = UseEpicConfig>(
-  epic: ComponentEpic<V, Config>
+  epic: ComponentEpic<V, Config>,
+  options?: UseEpicOptions
 ): Observable<V> {
   const { result$, wrappedEpic } = useMemo(() => {
     const result$ = new Subject<V>();
@@ -42,7 +43,7 @@ export function useEpic$<V, Config extends UseEpicConfig = UseEpicConfig>(
     return { result$: result$.asObservable(), wrappedEpic } as const;
   }, [epic]);
 
-  useEpicEffect(wrappedEpic);
+  useEpicEffect(wrappedEpic, options);
 
   return result$;
 }

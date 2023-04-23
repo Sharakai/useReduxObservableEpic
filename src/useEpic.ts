@@ -1,7 +1,8 @@
 import type { ComponentEpic } from "./ComponentEpic";
 import type { UseEpicConfig } from "./UseEpicConfig";
-import { useEpic$ } from "./useEpic$";
 import { useObservable } from "./internal/useObservable";
+import { useEpic$ } from "./useEpic$";
+import type { UseEpicOptions } from "./useEpicEffect";
 
 /**
  * A variant of {@link useEpic$} which subscribes to the returned Observable and
@@ -68,8 +69,9 @@ import { useObservable } from "./internal/useObservable";
  */
 export function useEpic<V, Config extends UseEpicConfig = UseEpicConfig>(
   epic: ComponentEpic<V, Config>,
-  initialValue: V
+  initialValue: V,
+  options?: UseEpicOptions
 ): V {
-  const value$ = useEpic$(epic);
+  const value$ = useEpic$(epic, options);
   return useObservable(value$, initialValue);
 }
