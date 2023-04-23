@@ -3,7 +3,8 @@ import { Subject, from, tap } from "rxjs";
 
 import type { ComponentEpic } from "./ComponentEpic";
 import type { UseEpicConfig } from "./UseEpicConfig";
-import { isDispatched, useEpicEffect } from "./useEpicEffect";
+import { useEpicEffect } from "./useEpicEffect";
+import { isDispatched } from "./internal/EpicDispatch";
 
 /**
  * A variant of {@link useEpicEffect} which tracks the last emitted value
@@ -23,14 +24,12 @@ import { isDispatched, useEpicEffect } from "./useEpicEffect";
  *
  * @see {@link useEpicEffect}
  */
-export function useEpic$<V, Config extends UseEpicConfig = UseEpicConfig>(
-  epic: ComponentEpic<V, Config>
-): Subject<V> {
+export function useEpic$<V, Config extends UseEpicConfig = UseEpicConfig>(epic: ComponentEpic<V, Config>): Subject<V> {
   const { result$, wrappedEpic } = useMemo(() => {
     const result$ = new Subject<V>();
 
-    const wrappedEpic: ComponentEpic<V, Config> = (...epicDeps) =>
-      from(epic(...epicDeps)).pipe(
+    const wrappedEpic: ComponentEpic<V, Config> = (...epicArgs) =>
+      from(epic(...epicArgs)).pipe(
         tap({
           next: (value) => {
             if (!isDispatched(value)) result$.next(value);

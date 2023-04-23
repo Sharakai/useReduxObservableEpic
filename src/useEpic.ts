@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-
 import type { ComponentEpic } from "./ComponentEpic";
 import type { UseEpicConfig } from "./UseEpicConfig";
 import { useEpic$ } from "./useEpic$";
+import { useObservable } from "./internal/useObservable";
 
 /**
  * A variant of {@link useEpic$} which subscribes to the returned Observable and
@@ -72,13 +71,5 @@ export function useEpic<V, Config extends UseEpicConfig = UseEpicConfig>(
   initialValue: V
 ): V {
   const value$ = useEpic$(epic);
-
-  const [value, setValue] = useState(initialValue);
-
-  useEffect(() => {
-    const subscription = value$.subscribe({ next: setValue });
-    return () => subscription.unsubscribe();
-  }, [value$]);
-
-  return value;
+  return useObservable(value$, initialValue);
 }

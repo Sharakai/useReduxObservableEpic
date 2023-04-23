@@ -2,22 +2,10 @@ import { useEffect } from "react";
 import { EMPTY, endWith, filter, map, switchMap } from "rxjs";
 
 import { useAddEpic } from "./AddEpicContext";
-import {
-  USE_EPIC_DISPATCH_KEY,
-  type ComponentEpic,
-  type EpicDispatch,
-  type EpicDispatchedAction,
-} from "./ComponentEpic";
+import type { ComponentEpic } from "./ComponentEpic";
 import type { UseEpicConfig } from "./UseEpicConfig";
 import { usePropAsObservable } from "./internal/usePropAsObservable";
-
-const useEpicDispatch: EpicDispatch = (action) => ({
-  ...action,
-  [USE_EPIC_DISPATCH_KEY]: true,
-});
-
-export const isDispatched = (action: unknown): action is EpicDispatchedAction =>
-  typeof action === "object" && !!action && USE_EPIC_DISPATCH_KEY in action;
+import { epicDispatch, isDispatched, stripEpicDispatchKey } from "./internal/EpicDispatch";
 
 /**
  * Subscribes to the provided Epic for the lifetime of a React component.
@@ -80,22 +68,21 @@ export const isDispatched = (action: unknown): action is EpicDispatchedAction =>
  * };
  * ```
  */
-export function useEpicEffect<
-  V = unknown,
-  Config extends UseEpicConfig = UseEpicConfig
->(epic: ComponentEpic<V, Config>): void {
+export function useEpicEffect<V = unknown, Config extends UseEpicConfig = UseEpicConfig>(
+  epic: ComponentEpic<V, Config>
+): void {
   const epic$ = usePropAsObservable(epic);
   const addEpic = useAddEpic();
 
   useEffect(() => {
     addEpic((action$, state$, dependencies) => {
-      const _dependencies = { ...dependencies, dispatch: useEpicDispatch };
+      const _dependencies = { ...dependencies, dispatch: epicDispatch };
 
       return epic$.pipe(
         endWith(() => EMPTY),
         switchMap((epic) => epic(action$, state$, _dependencies)),
         filter(isDispatched),
-        map(({ "@@USE_EPIC_DISPATCH": _, ...action }) => action)
+        map(stripEpicDispatchKey)
       );
     });
   }, [addEpic, epic$]);
