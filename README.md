@@ -11,7 +11,7 @@ Provides access to the Redux-Observable actions observable, state observable, an
 
 ## Getting Started
 ```sh
-npm install use-redux-observable-epics
+npm install use-redux-observable-epic
 ```
 
 ## API
