@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Subject, from, tap } from "rxjs";
+import { Observable, Subject, from, tap } from "rxjs";
 
 import type { ComponentEpic } from "./ComponentEpic";
 import type { UseEpicConfig } from "./UseEpicConfig";
@@ -7,8 +7,7 @@ import { useEpicEffect } from "./useEpicEffect";
 import { isDispatched } from "./internal/EpicDispatch";
 
 /**
- * A variant of {@link useEpicEffect} which tracks the last emitted value
- * in a BehaviorSubject.
+ * A variant of {@link useEpicEffect} which provides the emitted values as an Observable.
  *
  * @remarks
  * This is best used when you want to have a stream of values to access in your component,
@@ -19,12 +18,13 @@ import { isDispatched } from "./internal/EpicDispatch";
  *   would happen on a re-render)
  *
  * @param epic - {@link ComponentEpic} to subscribe to and pull values from
- * @param initialValue - Initial value to return before the Epic emits a value
- * @returns A {@link BehaviorSubject} of the epic's value
+ * @returns A {@link Subject} emitting the epic's value
  *
  * @see {@link useEpicEffect}
  */
-export function useEpic$<V, Config extends UseEpicConfig = UseEpicConfig>(epic: ComponentEpic<V, Config>): Subject<V> {
+export function useEpic$<V, Config extends UseEpicConfig = UseEpicConfig>(
+  epic: ComponentEpic<V, Config>
+): Observable<V> {
   const { result$, wrappedEpic } = useMemo(() => {
     const result$ = new Subject<V>();
 
@@ -39,7 +39,7 @@ export function useEpic$<V, Config extends UseEpicConfig = UseEpicConfig>(epic: 
         })
       );
 
-    return { result$, wrappedEpic } as const;
+    return { result$: result$.asObservable(), wrappedEpic } as const;
   }, [epic]);
 
   useEpicEffect(wrappedEpic);
