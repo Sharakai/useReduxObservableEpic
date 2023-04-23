@@ -1,4 +1,4 @@
-export type InteropAction = Record<keyof unknown, unknown>;
+export type InteropAction = Record<keyof any, unknown>;
 
 export interface UseEpicConfig {
   /** Actions */

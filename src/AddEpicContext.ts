@@ -1,7 +1,8 @@
 import { createContext, useContext } from "react";
 import type { Epic } from "redux-observable";
 
-export type AddEpic = (epic: Epic) => void;
+/** @returns teardown */
+export type AddEpic = (epic: Epic) => () => void;
 
 export const AddEpic = createContext<AddEpic>(() => {
   throw new Error(`

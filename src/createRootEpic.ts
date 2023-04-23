@@ -1,5 +1,5 @@
 import { combineEpics, Epic } from "redux-observable";
-import { BehaviorSubject, mergeMap } from "rxjs";
+import { BehaviorSubject, finalize, mergeMap, Subject, takeUntil } from "rxjs";
 import type { AddEpic } from "./AddEpicContext";
 
 /**
@@ -12,7 +12,15 @@ export const createRootEpic = (epics: Epic[]) => {
 
   const rootEpic: Epic = (...args) => epic$.pipe(mergeMap((epic) => epic(...args)));
 
-  const addEpic: AddEpic = (epic: Epic) => epic$.next(epic);
+  const addEpic: AddEpic = (epic: Epic) => {
+    const completed$ = new Subject<void>();
+    const complete = () => {
+      completed$.next();
+      completed$.complete();
+    };
+    epic$.next((...epicArgs) => epic(...epicArgs).pipe(finalize(complete), takeUntil(completed$)));
+    return complete;
+  };
 
   return { rootEpic, addEpic } as const;
 };

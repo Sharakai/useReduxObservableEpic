@@ -1,11 +1,10 @@
 import { useEffect } from "react";
-import { EMPTY, endWith, filter, map, switchMap } from "rxjs";
+import { filter, from, map } from "rxjs";
 
 import { useAddEpic, type AddEpic } from "./AddEpicContext";
 import type { ComponentEpic } from "./ComponentEpic";
 import type { UseEpicConfig } from "./UseEpicConfig";
 import { epicDispatch, isDispatched, stripEpicDispatchKey } from "./internal/EpicDispatch";
-import { usePropAsObservable } from "./internal/usePropAsObservable";
 
 export interface UseEpicOptions {
   addEpic?: AddEpic;
@@ -76,23 +75,17 @@ export function useEpicEffect<V = unknown, Config extends UseEpicConfig = UseEpi
   epic: ComponentEpic<V, Config>,
   options?: UseEpicOptions
 ): void {
-  const epic$ = usePropAsObservable(epic);
-
   const addEpicContext = useAddEpic();
+  // Allow user to provide their own `addEpic` function, else fallback to context.
+  // This allows addEpic to be a module-level singleton if desired
+  const addEpic = options?.addEpic ?? addEpicContext;
 
   useEffect(() => {
-    // Allow user to provide their own `addEpic` function, else fallback to context.
-    // This allows addEpic to be a global
-    const addEpic = options?.addEpic ?? addEpicContext;
-    addEpic((action$, state$, dependencies) => {
-      const _dependencies = { ...dependencies, dispatch: epicDispatch };
-
-      return epic$.pipe(
-        endWith(() => EMPTY),
-        switchMap((epic) => epic(action$, state$, _dependencies)),
+    return addEpic((action$, state$, dependencies) =>
+      from(epic(action$, state$, { ...dependencies, dispatch: epicDispatch })).pipe(
         filter(isDispatched),
         map(stripEpicDispatchKey)
-      );
-    });
-  }, [options?.addEpic, addEpicContext, epic$]);
+      )
+    );
+  }, [addEpic, epic]);
 }
