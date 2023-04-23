@@ -1,4 +1,4 @@
-![useEpic logo](./logo/useEpic-logo-small.png)
+![useEpic logo](./logo/use-redux-observable-epic-small.png)
 # useReduxObservableEpic
 
 React hooks to integrate [Redux-Observable] Epics into a [React] component's lifecycle.
