@@ -15,13 +15,13 @@ export const createRootEpic = (epics: Epic[]) => {
   const rootEpic: Epic = (...args) => epic$.pipe(mergeMap((epic) => epic(...args)));
 
   const addEpic: AddEpic = (epic) => {
-    const completed$ = new Subject<void>();
-    const complete = () => {
-      completed$.next();
-      completed$.complete();
+    const notifier = new Subject<void>();
+    const notifyComplete = () => {
+      notifier.next();
+      notifier.complete();
     };
-    epic$.next((...epicArgs) => epic(...epicArgs).pipe(finalize(complete), takeUntil(completed$)));
-    return complete;
+    epic$.next((...epicArgs) => epic(...epicArgs).pipe(finalize(notifyComplete), takeUntil(notifier)));
+    return notifyComplete;
   };
 
   return { rootEpic, addEpic } as const;
