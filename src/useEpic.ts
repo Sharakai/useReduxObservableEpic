@@ -1,5 +1,4 @@
-import type { ComponentEpic } from "./ComponentEpic";
-import type { UseEpicConfig } from "./UseEpicConfig";
+import type { ComponentEpic, UseEpicConfig } from "./ComponentEpic";
 import { useObservable } from "./internal/useObservable";
 import { useEpic$ } from "./useEpic$";
 import type { UseEpicOptions } from "./useEpicEffect";

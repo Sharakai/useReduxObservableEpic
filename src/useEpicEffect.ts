@@ -2,8 +2,7 @@ import { useEffect } from "react";
 import { filter, from, map } from "rxjs";
 
 import { useAddEpic } from "./AddEpicContext";
-import type { ComponentEpic } from "./ComponentEpic";
-import type { UseEpicConfig } from "./UseEpicConfig";
+import type { ComponentEpic, UseEpicConfig } from "./ComponentEpic";
 import type { AddEpic } from "./createRootEpic";
 import { epicDispatch, isDispatched, stripEpicDispatchKey } from "./internal/EpicDispatch";
 

@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import { Observable, Subject, from, tap } from "rxjs";
 
-import type { ComponentEpic } from "./ComponentEpic";
-import type { UseEpicConfig } from "./UseEpicConfig";
+import type { ComponentEpic, UseEpicConfig } from "./ComponentEpic";
 import { isDispatched } from "./internal/EpicDispatch";
 import { type UseEpicOptions, useEpicEffect } from "./useEpicEffect";
 
