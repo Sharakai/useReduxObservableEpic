@@ -1,10 +1,9 @@
-import { useMemo } from "react";
-import { Epic } from "redux-observable";
-import { Observable, Subject, tap, map, partition, merge, ignoreElements } from "rxjs";
+import { useCallback } from "react";
+import { Observable, Subject } from "rxjs";
 
 import type { ComponentEpic, UseEpicConfig } from "./ComponentEpic";
-import { epicDispatch, isDispatched, stripEpicDispatchKey } from "./internal/EpicDispatch";
-import { type UseEpicOptions, useEpic } from "./useEpic";
+import { useEpicStateInner } from "./internal/useEpicStateInner";
+import type { UseEpicOptions } from "./useEpic";
 
 /**
  * A variant of {@link useEpic} which allows for an Epic to also emit values,
@@ -27,21 +26,6 @@ export function useEpicState$<V, Config extends UseEpicConfig = UseEpicConfig>(
   epic: ComponentEpic<V, Config>,
   options?: UseEpicOptions
 ): Observable<V> {
-  const { result$, wrappedEpic } = useMemo(() => {
-    const result$ = new Subject<V>();
-
-    const wrappedEpic: Epic<Config["A"], Config["A"], Config["S"], Config["D"]> = (action$, state$, dependencies) => {
-      const [dispatched$, value$] = partition(
-        epic(action$, state$, { ...dependencies, dispatch: epicDispatch }),
-        isDispatched
-      );
-      return merge(value$.pipe(tap(result$), ignoreElements()), dispatched$.pipe(map(stripEpicDispatchKey)));
-    };
-
-    return { result$: result$.asObservable(), wrappedEpic } as const;
-  }, [epic]);
-
-  useEpic(wrappedEpic, options);
-
-  return result$;
+  const value$Factory = useCallback(() => new Subject<V>(), []);
+  return useEpicStateInner(epic, value$Factory, options);
 }

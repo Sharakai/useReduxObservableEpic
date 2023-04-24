@@ -1,7 +1,8 @@
+import { useMemo, useState } from "react";
+import { NextObserver } from "rxjs";
 import type { ComponentEpic, UseEpicConfig } from "./ComponentEpic";
-import { useObservable } from "./internal/useObservable";
+import { useEpicStateInner } from "./internal/useEpicStateInner";
 import type { UseEpicOptions } from "./useEpic";
-import { useEpicState$ } from "./useEpicState$";
 
 /**
  * A variant of {@link useEpicState$} which subscribes to the returned Observable and
@@ -71,6 +72,8 @@ export function useEpicState<V, Config extends UseEpicConfig = UseEpicConfig>(
   initialValue: V,
   options?: UseEpicOptions
 ): V {
-  const value$ = useEpicState$(epic, options);
-  return useObservable(value$, initialValue);
+  const [value, setValue] = useState<V>(initialValue);
+  const observer = useMemo<NextObserver<V>>(() => ({ next: setValue }), []);
+  useEpicStateInner(epic, observer, options);
+  return value;
 }
