@@ -1,76 +1,80 @@
-import type { ComponentEpic, UseEpicConfig } from "./ComponentEpic";
-import { useObservable } from "./internal/useObservable";
-import { useEpic$ } from "./useEpic$";
-import type { UseEpicOptions } from "./useEpicEffect";
+import { useEffect } from "react";
+import type { Epic } from "redux-observable";
+
+import { useAddEpic } from "./AddEpicContext";
+import type { AddEpic } from "./createRootEpic";
+
+export interface UseEpicOptions {
+  addEpic?: AddEpic;
+}
 
 /**
- * A variant of {@link useEpic$} which subscribes to the returned Observable and
- * uses the output as React state.
+ * Subscribes to the provided Epic for the lifetime of a React component.
  *
  * @remarks
- * Causes a re-render of a component whenever the epic's status changes or a new value is emitted.
  *
- * @param epic - {@link ComponentEpic} to subscribe to and pull values from
- * @param initialValue - Initial value for the state's value
- * @returns The last emitted value
+ * Provides the ability to run side-effects within the context of a React component
+ * with access to the `redux-observable` action and state streams and dependencies.
  *
- * @see {@link useEpic$}
+ * The provided `epic` is subscribed in the components effect phase, and unsubscribed
+ * on component teardown. The epic is subsequently removed from the `redux-observable`
+ * pipeline and will receive no further action or state emissions.
  *
  * @example
- * Request a stream of data from a service using data in redux, render on the UI, and stop on logout
+ * An epic to time the duration between a "start-timing" and "stop-timing" action being
+ * dispatched from within a React component
  * ```tsx
- * interface Player {
- *   id: string;
- *   name: string;
- * }
+ * const startTiming = createAction<string>("start-timing");
+ * const stopTiming = createAction<string>("stop-timing");
  *
- * const logout = createAction("logout");
- *
- * const playersEpic: ComponentEpic<
- *   Player[],
- *   {
- *     S: { game: { id: string } }
- *     D: { playerService: { getPlayers$: (id: string) => Observable<Player[]> } }
- *   }
- * > = (action$, state$, { playerService }) =>
- *   defer(() => {
- *     const { game } = state$.value;
- *     const players$ = playerService.getPlayers$(game.id);
- *     return players$.pipe(
- *       startWith({ value: [], loading: true, error: false, fulfilled: false }),
- *       scan<Player[]>((acc, value) => [...acc, ...value], []),
- *       map(value => ({ value, loading: false, error: false, fulfilled: false })),
- *       takeUntil(action$.pipe(ofType(logout.type))),
- *       catchError(() => of({ value: [], loading: false, error: true, fulfilled: true})),
- *       endWith({ value: [], loading: false, error: false, fulfilled: true })
- *     );
- *   });
- *
- * const MyComponent: FC = () => {
- *   const {} = useEpic(playersEpic, []);
- *
- *   if (pending) return <div>Loading...</div>;
- *
- *   if (error) return <div>Failed to fetch player data</div>;
- *
- *   return (
- *     <>
- *       <ul>
- *         {players.map(player => (
- *           <li key={player.id}>{player.name}</li>
- *         ))}
- *       </ul>
- *       {fulfilled && <div>Connection to server closed.</div>}
- *     </>
+ * const timingEpic = (action$, state$, { logService }) =>
+ *   action$.pipe(
+ *     ofType(startTiming.type),
+ *     switchMap(start => {
+ *       const startTime = Date.now();
+ *       return action$.pipe(
+ *         ofType(stopTiming.type),
+ *         filter(stop => start.payload === stop.payload),
+ *         map(() => Date.now() - startTime),
+ *       );
+ *     }),
+ *     take(1),
+ *     withLatestFrom(state$),
+ *     tap(([elapsedTime, state]) => {
+ *       const userId = state.user.id;
+ *       logService.upload(userId, elapsedTime);
+ *     }),
+ *     ignoreElements(),
  *   );
+ *
+ * const RootComponent: FC = () => {
+ *   // Connect the `timingEpic` into redux-observable for the lifetime of the component
+ *   useEpic(timingEpic);
+ *   return (
+ *     <div>
+ *       <TimedComponent componentId="1" />
+ *       <TimedComponent componentId="2" />
+ *     </div>
+ *   );
+ * };
+ *
+ * const TimedComponent: FC<{ componentId: string }> = ({ componentId }) => {
+ *   const dispatch = useDispatch();
+ *
+ *   useEffect(() => {
+ *     dispatch(startTiming(componentId));
+ *     return () => dispatch(stopTiming(componentId));
+ *   }, [dispatch]);
+ *
+ *   return <div>Being Timed!</div>;
  * };
  * ```
  */
-export function useEpic<V, Config extends UseEpicConfig = UseEpicConfig>(
-  epic: ComponentEpic<V, Config>,
-  initialValue: V,
-  options?: UseEpicOptions
-): V {
-  const value$ = useEpic$(epic, options);
-  return useObservable(value$, initialValue);
+export function useEpic(epic: Epic, options?: UseEpicOptions): void {
+  const addEpicContext = useAddEpic();
+  // Allow user to provide their own `addEpic` function, else fallback to context.
+  // This allows addEpic to be a module-level singleton if desired
+  const addEpic = options?.addEpic ?? addEpicContext;
+
+  useEffect(() => addEpic(epic), [addEpic, epic]);
 }

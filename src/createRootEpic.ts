@@ -18,7 +18,7 @@ export const createRootEpic = (epics: Epic[]) => {
     const notifier = new Subject<void>();
     const notifyComplete = () => {
       notifier.next();
-      notifier.complete();
+      notifier.unsubscribe();
     };
     epic$.next((...epicArgs) => epic(...epicArgs).pipe(finalize(notifyComplete), takeUntil(notifier)));
     return notifyComplete;

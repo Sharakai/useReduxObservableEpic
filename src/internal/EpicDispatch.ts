@@ -1,9 +1,9 @@
-import { InteropAction } from "../UseEpicConfig";
+import type { Action } from "redux";
 
 /** @internal */
 export const USE_EPIC_DISPATCH_KEY = "@@USE_EPIC_DISPATCH";
 
-export type EpicDispatch = <A extends InteropAction>(action: A) => A & { [USE_EPIC_DISPATCH_KEY]: true };
+export type EpicDispatch = <A extends Action>(action: A) => A & { [USE_EPIC_DISPATCH_KEY]: true };
 
 export type EpicDispatchedAction = ReturnType<EpicDispatch>;
 

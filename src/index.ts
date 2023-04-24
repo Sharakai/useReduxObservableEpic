@@ -1,7 +1,6 @@
-export { useEpic } from "./useEpic";
-export { useEpic$ } from "./useEpic$";
-export { useEpicEffect, type UseEpicOptions } from "./useEpicEffect";
-export type { ComponentEpic, UseEpicConfig } from "./ComponentEpic";
-
-export { createRootEpic, type AddEpic } from "./createRootEpic";
 export { AddEpicContext, useAddEpic } from "./AddEpicContext";
+export type { ComponentEpic, UseEpicConfig } from "./ComponentEpic";
+export { createRootEpic, type AddEpic } from "./createRootEpic";
+export { useEpic, type UseEpicOptions } from "./useEpic";
+export { useEpicState } from "./useEpicState";
+export { useEpicState$ } from "./useEpicState$";

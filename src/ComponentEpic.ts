@@ -1,16 +1,17 @@
+import type { Action } from "redux";
 import type { StateObservable } from "redux-observable";
 import type { Observable, ObservableInput } from "rxjs";
 import type { EpicDispatch, EpicDispatchedAction } from "./internal/EpicDispatch";
 
-type InteropAction = Record<keyof any, unknown>;
+type AnyObject = Record<keyof never, unknown>;
 
 export interface UseEpicConfig {
   /** Actions */
-  A: InteropAction;
+  A: Action;
   /** State */
-  S: unknown;
+  S: AnyObject;
   /** Dependencies */
-  D: unknown;
+  D: AnyObject;
 }
 
 export type ComponentEpic<Value = unknown, EpicConfig extends UseEpicConfig = UseEpicConfig> = (

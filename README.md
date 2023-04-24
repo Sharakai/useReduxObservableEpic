@@ -18,20 +18,20 @@ npm install use-redux-observable-epic
 
 Hook          | What it does
 -------------:|:-------
-[`useEpicEffect`](#useepiceffect-source) | Subscribes to the provided Epic for the lifetime of a React component.
-[`useEpic$`](#useepic-source)      | A variant of `useEpicEffect` which provides the emitted values as an Observable.
-[`useEpic`](#useepic-source-1)       | A variant of `useEpic$` which subscribes to the returned Observable and uses the output as React state.
+[`useEpic`](#useEpic-source) | Subscribes to the provided Epic for the lifetime of a React component.
+[`useEpicState$`](#useepic-source) | A variant of `useEpic` which provides the emitted values as an Observable.
+[`useEpicState`](#useepic-source-1) | A variant of `useEpicState$` which subscribes to the returned Observable and uses the output as React state.
 
-
-### `useEpicEffect` ([_Source_][useEpicEffect])
-
-TODO
-
-### `useEpic$` ([_Source_][useEpic$])
-
-TODO
 
 ### `useEpic` ([_Source_][useEpic])
+
+TODO
+
+### `useEpicState$` ([_Source_][useEpicState$])
+
+TODO
+
+### `useEpicState` ([_Source_][useEpic])
 
 TODO
 
@@ -40,6 +40,6 @@ TODO
 [redux-observable]: https://github.com/redux-observable/redux-observable
 [react]: https://react.dev/
 [redux]: https://redux.js.org/
-[useEpicEffect]: src/useEpicEffect.ts
-[useEpic$]: src/useEpic$.ts
 [useEpic]: src/useEpic.ts
+[useEpicState$]: src/useEpicState$.ts
+[useEpicState]: src/useEpicState.ts
