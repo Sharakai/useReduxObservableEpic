@@ -1,6 +1,8 @@
 import { combineEpics, Epic } from "redux-observable";
 import { BehaviorSubject, finalize, mergeMap, Subject, takeUntil } from "rxjs";
-import type { AddEpic } from "./AddEpicContext";
+
+/** @returns teardown */
+export type AddEpic = (epic: Epic) => () => void;
 
 /**
  * Creates a root Redux-Observable epic supporting dynamic addition of epics
@@ -12,7 +14,7 @@ export const createRootEpic = (epics: Epic[]) => {
 
   const rootEpic: Epic = (...args) => epic$.pipe(mergeMap((epic) => epic(...args)));
 
-  const addEpic: AddEpic = (epic: Epic) => {
+  const addEpic: AddEpic = (epic) => {
     const completed$ = new Subject<void>();
     const complete = () => {
       completed$.next();

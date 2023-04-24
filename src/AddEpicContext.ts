@@ -1,14 +1,11 @@
 import { createContext, useContext } from "react";
-import type { Epic } from "redux-observable";
+import type { AddEpic } from "./createRootEpic";
 
-/** @returns teardown */
-export type AddEpic = (epic: Epic) => () => void;
-
-export const AddEpic = createContext<AddEpic>(() => {
+export const AddEpicContext = createContext<AddEpic>(() => {
   throw new Error(`
     AddEpic context was not found.
     Please ensure AddEpic.Provider is included at the root of your application.
   `);
 });
 
-export const useAddEpic = () => useContext(AddEpic);
+export const useAddEpic = () => useContext(AddEpicContext);
