@@ -1,27 +1,19 @@
 import type { Action } from "redux";
 
 /** @internal */
-export const USE_EPIC_DISPATCH_KEY = "@@USE_EPIC_DISPATCH";
+export const USE_EPIC_DISPATCH_KEY = Symbol.for("USE_EPIC_DISPATCH");
 
-export type EpicDispatch = <A extends Action>(action: A) => A & { [USE_EPIC_DISPATCH_KEY]: true };
+export type EpicDispatch = <A extends Action>(action: A) => { [USE_EPIC_DISPATCH_KEY]: true; action: A };
 
 export type EpicDispatchedAction = ReturnType<EpicDispatch>;
 
 /** @internal */
 export const epicDispatch: EpicDispatch = (action) => ({
-  ...action,
   [USE_EPIC_DISPATCH_KEY]: true,
+  action,
 });
 
 /** @internal */
 export function isDispatched(action: unknown): action is EpicDispatchedAction {
   return typeof action === "object" && !!action && USE_EPIC_DISPATCH_KEY in action;
-}
-
-/** @internal */
-export function stripEpicDispatchKey(
-  action: EpicDispatchedAction
-): Omit<EpicDispatchedAction, typeof USE_EPIC_DISPATCH_KEY> {
-  const { [USE_EPIC_DISPATCH_KEY]: _, ...rest } = action;
-  return rest;
 }

@@ -4,7 +4,7 @@ import { ignoreElements, map, merge, NextObserver, partition, tap } from "rxjs";
 
 import type { ComponentEpic, UseEpicConfig } from "../ComponentEpic";
 import { useEpic, type UseEpicOptions } from "../useEpic";
-import { epicDispatch, isDispatched, stripEpicDispatchKey } from "./EpicDispatch";
+import { epicDispatch, isDispatched } from "./EpicDispatch";
 
 /** @internal */
 export function useEpicStateInner<
@@ -20,7 +20,10 @@ export function useEpicStateInner<
         epic(action$, state$, { ...dependencies, dispatch: epicDispatch }),
         isDispatched
       );
-      return merge(value$.pipe(tap(_observer), ignoreElements()), dispatched$.pipe(map(stripEpicDispatchKey)));
+      return merge(
+        value$.pipe(tap(_observer), ignoreElements()),
+        dispatched$.pipe(map((dispatched) => dispatched.action))
+      );
     };
 
     return { _observer, wrappedEpic } as const;
