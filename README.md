@@ -1,9 +1,13 @@
+### 🚧 WORK IN PROGRESS - Expect breaking changes. Use at your own risk. 🚧
+
+---
+
 ![useEpic logo](./logo/use-redux-observable-epic-small.png)
 # useReduxObservableEpic
 
 React hooks to integrate [Redux-Observable] Epics into a [React] component's lifecycle.
 
-Provides access to the Redux-Observable actions observable, state observable, and dependencies, within the context of a React component.
+Provides access to the Redux-Observable actions and state observables and dependencies within the context of a React component.
 
 
 ## Purpose
